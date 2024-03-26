@@ -16,6 +16,7 @@ from fastapi import Depends, FastAPI, APIRouter, Request, HTTPException, status,
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from fastapi_health import health
 from sse_starlette.sse import EventSourceResponse
 from starlette_context.plugins import RequestIdPlugin  # type: ignore
 from starlette_context.middleware import RawContextMiddleware
@@ -43,7 +44,11 @@ from llama_cpp.server.types import (
 from llama_cpp.server.errors import RouteErrorHandler
 
 
+def check_health():
+    return True
+
 router = APIRouter(route_class=RouteErrorHandler)
+router.add_api_route("/health", health([check_health]))
 
 _server_settings: Optional[ServerSettings] = None
 
